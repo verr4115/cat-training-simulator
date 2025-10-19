@@ -57,7 +57,14 @@ export const CatStage: React.FC<CatStageProps> = ({
       if (scenario.id === 'meowing') imagePath = '/cat-images/meowing.png';
       else if (scenario.id === 'jumping') imagePath = '/cat-images/jumping.png';
       else if (scenario.id === 'scratching') imagePath = '/cat-images/scratching.png';
-      else imagePath = `/cat-images/idle${idleFrame}.png`; // Fallback for other scenarios
+      else {
+        // Use scenario-specific idle for scratching, regular idle for others
+        if (scenario.id === 'scratching') {
+          imagePath = `/cat-images/idelcouch${idleFrame}.png`;
+        } else {
+          imagePath = `/cat-images/idle${idleFrame}.png`;
+        }
+      }
     }
     // Alternative behavior (sitting, standing, being quiet, etc.)
     else if (animation.type === 'alt_behavior') {
@@ -70,7 +77,12 @@ export const CatStage: React.FC<CatStageProps> = ({
     }
     // Default idle state - cycle between two idle images
     else {
-      imagePath = `/cat-images/idle${idleFrame}.png`;
+      // Use scenario-specific idle images for scratching scenario
+      if (scenario.id === 'scratching') {
+        imagePath = `/cat-images/idelcouch${idleFrame}.png`;
+      } else {
+        imagePath = `/cat-images/idle${idleFrame}.png`;
+      }
     }
     
     return imagePath;
