@@ -1,0 +1,18 @@
+.simulator-graph {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.graph-container {
+  width: 100%;
+  min-height: 300px;
+}
+
+@media (max-width: 768px) {
+  .graph-container {
+    min-height: 250px;
+  }
+}
+

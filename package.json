@@ -1,0 +1,25 @@
+{
+  "name": "cat-training-simulator",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Interactive BCBA training simulator for learning reinforcement strategies",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "plotly.js-dist-min": "^3.1.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  }
+}
+
