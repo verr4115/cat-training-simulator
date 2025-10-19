@@ -162,7 +162,7 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
                 className={`reinforcer-button ${state.reinforcer.type === type ? 'active' : ''}`}
                 onClick={() => onReinforcerChange(type, state.reinforcer.magnitude)}
               >
-                {type === 'treat' && '🦴'}
+                {type === 'treat' && '🐟'}
                 {type === 'clicker' && '🔔'}
                 {type === 'praise' && '👏'}
                 <span>{type}</span>

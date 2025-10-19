@@ -14,48 +14,23 @@ interface CatStageProps {
 export const CatStage: React.FC<CatStageProps> = ({ 
   scenario, 
   animation, 
-  MO, 
+  MO: _MO, 
   SAT, 
   BURST,
   currentTime 
 }) => {
-  const [showIcon, setShowIcon] = useState(false);
-  const [iconType, setIconType] = useState<'target' | 'alt' | 'reinforce'>('target');
   const [idleFrame, setIdleFrame] = useState(1);
 
-  // Cycle between idle frames every 2 seconds when idle
+  // Cycle between idle frames every 0.5 seconds when idle
   useEffect(() => {
     if (animation.type === 'idle') {
       const interval = setInterval(() => {
         setIdleFrame(prev => prev === 1 ? 2 : 1);
-      }, 2000);
+      }, 500);
       
       return () => clearInterval(interval);
     }
   }, [animation.type, currentTime]);
-
-  // Handle animation changes
-  useEffect(() => {
-    if (animation.type === 'target_behavior' || animation.type === 'alt_behavior') {
-      setIconType(animation.type === 'target_behavior' ? 'target' : 'alt');
-      setShowIcon(true);
-      
-      const timer = setTimeout(() => {
-        setShowIcon(false);
-      }, 800);
-      
-      return () => clearTimeout(timer);
-    } else if (animation.type === 'reinforcement') {
-      setIconType('reinforce');
-      setShowIcon(true);
-      
-      const timer = setTimeout(() => {
-        setShowIcon(false);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [animation.startTime, animation.type]);
 
   const getCatImage = (): string => {
     let imagePath = '';
@@ -92,91 +67,32 @@ export const CatStage: React.FC<CatStageProps> = ({
     return imagePath;
   };
 
-  const getCatClass = (): string => {
-    const classes = ['cat'];
-    
-    if (animation.type === 'target_behavior') {
-      classes.push('cat-target-behavior');
-      if (scenario.id === 'jumping') classes.push('cat-jumping');
-      if (scenario.id === 'meowing') classes.push('cat-meowing');
-      if (scenario.id === 'scratching') classes.push('cat-scratching');
-    } else if (animation.type === 'alt_behavior') {
-      classes.push('cat-alt-behavior');
-    } else if (animation.type === 'reinforcement') {
-      classes.push('cat-reinforced');
-    } else if (animation.type === 'burst') {
-      classes.push('cat-burst');
-    } else if (animation.type === 'sleepy') {
-      classes.push('cat-sleepy');
-    }
-    
-    return classes.join(' ');
-  };
-
-  const getTargetIcon = (): string => {
-    switch (scenario.id) {
-      case 'jumping': return '⬆️';
-      case 'meowing': return '🔊';
-      case 'sitting': return '🏃';
-      case 'scratching': return '🪃';
-      default: return '❗';
-    }
-  };
-
-  const getAltIcon = (): string => {
-    switch (scenario.id) {
-      case 'jumping': return '🪑';
-      case 'meowing': return '🤫';
-      case 'sitting': return '🧘';
-      case 'scratching': return '🎯';
-      default: return '✓';
-    }
-  };
+  // No longer using CSS classes for animations, but keeping for fallback emoji
+  // const getCatClass = (): string => {
+  //   const classes = ['cat'];
+  //   
+  //   if (animation.type === 'target_behavior') {
+  //     classes.push('cat-target-behavior');
+  //     if (scenario.id === 'jumping') classes.push('cat-jumping');
+  //     if (scenario.id === 'meowing') classes.push('cat-meowing');
+  //     if (scenario.id === 'scratching') classes.push('cat-scratching');
+  //   } else if (animation.type === 'alt_behavior') {
+  //     classes.push('cat-alt-behavior');
+  //   } else if (animation.type === 'reinforcement') {
+  //     classes.push('cat-reinforced');
+  //   } else if (animation.type === 'burst') {
+  //     classes.push('cat-burst');
+  //   } else if (animation.type === 'sleepy') {
+  //     classes.push('cat-sleepy');
+  //   }
+  //   
+  //   return classes.join(' ');
+  // };
 
   return (
     <div className="cat-stage">
-      <div className="stage-header">
-        <h3>Cat Behavior Stage</h3>
-        <div className="stage-stats">
-          <div className="stat-item">
-            <span className="stat-label">Motivation:</span>
-            <div className="stat-bar">
-              <div 
-                className="stat-fill motivation" 
-                style={{ width: `${MO * 100}%` }}
-              />
-            </div>
-            <span className="stat-value">{Math.round(MO * 100)}%</span>
-          </div>
-          
-          <div className="stat-item">
-            <span className="stat-label">Satiation:</span>
-            <div className="stat-bar">
-              <div 
-                className="stat-fill satiation" 
-                style={{ width: `${SAT * 100}%` }}
-              />
-            </div>
-            <span className="stat-value">{Math.round(SAT * 100)}%</span>
-          </div>
-          
-          {BURST > 0.1 && (
-            <div className="stat-item">
-              <span className="stat-label">Burst:</span>
-              <div className="stat-bar">
-                <div 
-                  className="stat-fill burst" 
-                  style={{ width: `${BURST * 100}%` }}
-                />
-              </div>
-              <span className="stat-value">{Math.round(BURST * 100)}%</span>
-            </div>
-          )}
-        </div>
-      </div>
-
       <div className="stage-area">
-        <div className={getCatClass()}>
+        <div className="cat">
           <img 
             src={getCatImage()} 
             alt="Cat" 
@@ -191,36 +107,15 @@ export const CatStage: React.FC<CatStageProps> = ({
             }}
           />
         </div>
-
-        {showIcon && iconType === 'target' && (
-          <div className="behavior-icon target-icon">
-            {getTargetIcon()}
-          </div>
-        )}
-
-        {showIcon && iconType === 'alt' && (
-          <div className="behavior-icon alt-icon">
-            {getAltIcon()}
-          </div>
-        )}
-
-        {showIcon && iconType === 'reinforce' && (
-          <div className="reinforcement-effect">
-            <div className="treat-pop">🦴</div>
-            <div className="sparkle sparkle-1">✨</div>
-            <div className="sparkle sparkle-2">✨</div>
-            <div className="sparkle sparkle-3">✨</div>
-          </div>
-        )}
       </div>
 
       <div className="stage-legend">
         <div className="legend-item">
-          <span className="legend-icon target">{getTargetIcon()}</span>
+          <span className="legend-label">Target:</span>
           <span className="legend-text">{scenario.targetBehavior}</span>
         </div>
         <div className="legend-item">
-          <span className="legend-icon alt">{getAltIcon()}</span>
+          <span className="legend-label">Alternative:</span>
           <span className="legend-text">{scenario.alternativeBehavior}</span>
         </div>
       </div>

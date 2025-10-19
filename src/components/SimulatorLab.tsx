@@ -61,12 +61,11 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
 
   // Handle session completion
   useEffect(() => {
-    if (state.isComplete && !showSummary) {
+    if (state.isComplete && !summary) {
       const sessionSummary = generateSummary(state, scenario);
       setSummary(sessionSummary);
-      setShowSummary(true);
     }
-  }, [state.isComplete, scenario, showSummary, state]);
+  }, [state.isComplete, scenario, summary, state]);
 
   const handleRestart = () => {
     setState(initializeSimulation(scenario, state.sessionNumber));
@@ -230,17 +229,6 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
       </div>
 
       <div className="lab-content">
-        {state.isPaused && !state.isComplete && (
-          <div className="quick-tip-banner">
-            <div className="quick-tip-content">
-              <span className="tip-icon">💡</span>
-              <div className="tip-text">
-                <strong>Ready to start?</strong> Configure your intervention on the left, then press the <strong>Play button</strong> to begin!
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="controls-container">
           <SimulatorControls
             state={state}
@@ -252,43 +240,64 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
           />
         </div>
 
-        <div className="cat-and-events-row">
-          <div className="cat-container">
-            <div className="cat-stage-wrapper">
-              <CatStage 
-                scenario={scenario}
-                animation={state.currentAnimation}
-                MO={state.MO}
-                SAT={state.SAT}
-                BURST={state.BURST}
-                currentTime={state.t}
-              />
-              
-              {state.isPaused && !state.isComplete && (
-                <div className="play-overlay">
-                  <button 
-                    className="play-overlay-button"
-                    onClick={handlePauseToggle}
-                  >
-                    <span className="play-icon">▶</span>
-                    <span className="play-text">Start Training</span>
-                  </button>
+        <div className="right-content-scrollable">
+          {state.isPaused && !state.isComplete && (
+            <div className="quick-tip-banner">
+              <div className="quick-tip-content">
+                <span className="tip-icon">💡</span>
+                <div className="tip-text">
+                  <strong>Ready to start?</strong> Configure your intervention on the left, then press the <strong>Play button</strong> to begin!
                 </div>
+              </div>
+            </div>
+          )}
+
+          <div className="cat-and-events-row">
+            <div className="cat-container">
+              <div className="cat-stage-wrapper">
+                <CatStage 
+                  scenario={scenario}
+                  animation={state.currentAnimation}
+                  MO={state.MO}
+                  SAT={state.SAT}
+                  BURST={state.BURST}
+                  currentTime={state.t}
+                />
+                
+                {state.isPaused && !state.isComplete && (
+                  <div className="play-overlay">
+                    <button 
+                      className="play-overlay-button"
+                      onClick={handlePauseToggle}
+                    >
+                      <span className="play-icon">▶</span>
+                      <span className="play-text">Play</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              {state.isComplete && (
+                <button 
+                  className="view-summary-button" 
+                  onClick={() => setShowSummary(true)}
+                >
+                  📊 View Summary
+                </button>
               )}
             </div>
-          </div>
 
-          {state.events.length > 0 && (
             <div className="events-container">
               <EventFeed 
                 events={state.events}
                 maxEvents={20}
+                MO={state.MO}
+                SAT={state.SAT}
+                BURST={state.BURST}
               />
             </div>
-          )}
-        </div>
+          </div>
 
-        {state.timePoints.length > 0 && (
           <div className="graphs-container">
             <SimulatorGraph 
               timePoints={state.timePoints}
@@ -298,7 +307,7 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
               altBehavior={scenario.alternativeBehavior}
             />
           </div>
-        )}
+        </div>
       </div>
 
       {showSummary && summary && (

@@ -151,7 +151,7 @@ export const SCENARIOS: Scenario[] = [
       scheduleTarget: { type: 'EXT' },
       scheduleAlt: { type: 'VI', param: 8 },
       reinforcer: { type: 'treat', magnitude: 2 },
-      sessionDuration: 120
+      sessionDuration: 45
     }
   },
   {
@@ -169,7 +169,7 @@ export const SCENARIOS: Scenario[] = [
       scheduleTarget: { type: 'EXT' },
       scheduleAlt: { type: 'FI', param: 10 },
       reinforcer: { type: 'praise', magnitude: 1 },
-      sessionDuration: 120
+      sessionDuration: 50
     }
   },
   {
@@ -187,7 +187,7 @@ export const SCENARIOS: Scenario[] = [
       scheduleTarget: { type: 'EXT' },
       scheduleAlt: { type: 'VR', param: 3 },
       reinforcer: { type: 'treat', magnitude: 3 },
-      sessionDuration: 90
+      sessionDuration: 40
     }
   },
   {
@@ -205,7 +205,7 @@ export const SCENARIOS: Scenario[] = [
       scheduleTarget: { type: 'EXT' },
       scheduleAlt: { type: 'FR', param: 2 },
       reinforcer: { type: 'clicker', magnitude: 2 },
-      sessionDuration: 150
+      sessionDuration: 60
     }
   }
 ];

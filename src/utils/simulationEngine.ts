@@ -177,8 +177,9 @@ export function tick(state: SimulationState): void {
   );
   
   // 3) Sample emissions (behaviors are incompatible)
-  const emitAlt = Math.random() < pAlt * state.dt * 10;
-  const emitTarget = !emitAlt && Math.random() < pTarget * state.dt * 10;
+  // Reduced multiplier to 0.15 to make behaviors happen every 2-3 seconds
+  const emitAlt = Math.random() < pAlt * state.dt * 0.15;
+  const emitTarget = !emitAlt && Math.random() < pTarget * state.dt * 0.15;
   
   // 4) Handle schedules and intervention logic
   let delivered: 'target' | 'alt' | 'time' | null = null;
@@ -357,6 +358,12 @@ export function tick(state: SimulationState): void {
   // 9) Check for session end
   if (state.t >= state.sessionDuration) {
     state.isComplete = true;
+    
+    // Add final data point to graph
+    state.timePoints.push(state.t);
+    state.targetRates.push(calculateRate(state.recentTargetBehaviors, state.windowSize, state.dt));
+    state.altRates.push(calculateRate(state.recentAltBehaviors, state.windowSize, state.dt));
+    
     state.events.push({
       t: state.t,
       type: 'session_end',

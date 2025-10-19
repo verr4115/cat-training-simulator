@@ -1,20 +1,22 @@
 .event-feed {
   background: white;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  max-height: 300px;
+  max-height: 500px;
+  overflow: hidden;
 }
 
 .feed-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 2px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .feed-header h3 {
@@ -23,13 +25,71 @@
   font-size: 1.1rem;
 }
 
-.event-count {
-  font-size: 0.85rem;
+.feed-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.feed-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.feed-stats .stat-label {
+  font-size: 0.8rem;
   color: #666;
-  background: #f5f5f5;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  min-width: 70px;
+  font-weight: 500;
+}
+
+.feed-stats .stat-bar {
+  flex: 1;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.feed-stats .stat-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 6px;
+}
+
+.feed-stats .stat-fill.motivation {
+  background: linear-gradient(90deg, #FF9800, #FF5722);
+}
+
+.feed-stats .stat-fill.satiation {
+  background: linear-gradient(90deg, #2196F3, #1976D2);
+}
+
+.feed-stats .stat-fill.burst {
+  background: linear-gradient(90deg, #F44336, #D32F2F);
+  animation: pulse 0.5s infinite;
+}
+
+.feed-stats .stat-value {
+  font-size: 0.8rem;
+  color: #333;
+  min-width: 40px;
+  text-align: right;
   font-weight: 600;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .feed-content {
@@ -38,6 +98,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-height: 0;
 }
 
 .feed-content::-webkit-scrollbar {
@@ -153,7 +214,7 @@
 
 @media (max-width: 768px) {
   .event-feed {
-    max-height: 200px;
+    padding: 0.4rem;
   }
 
   .event-item {

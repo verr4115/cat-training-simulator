@@ -5,9 +5,12 @@ import '../styles/EventFeed.css';
 interface EventFeedProps {
   events: SimulationEvent[];
   maxEvents?: number;
+  MO?: number;
+  SAT?: number;
+  BURST?: number;
 }
 
-export const EventFeed: React.FC<EventFeedProps> = ({ events, maxEvents = 10 }) => {
+export const EventFeed: React.FC<EventFeedProps> = ({ events, maxEvents = 10, MO = 0, SAT = 0, BURST = 0 }) => {
   const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export const EventFeed: React.FC<EventFeedProps> = ({ events, maxEvents = 10 }) 
   const getEventIcon = (event: SimulationEvent): string => {
     switch (event.type) {
       case 'reinforcement':
-        return '🎁';
+        return '🐟';
       case 'burst_detected':
         return '🔥';
       case 'satiation':
@@ -51,17 +54,57 @@ export const EventFeed: React.FC<EventFeedProps> = ({ events, maxEvents = 10 }) 
 
   const recentEvents = events.slice(-maxEvents);
 
+  // Show all events since behaviors are less frequent now
+  const displayEvents = recentEvents;
+
   return (
     <div className="event-feed">
       <div className="feed-header">
         <h3>📝 Event Log</h3>
-        <span className="event-count">{events.length} events</span>
       </div>
+
+      <div className="feed-stats">
+        <div className="stat-item">
+          <span className="stat-label">Motivation:</span>
+          <div className="stat-bar">
+            <div 
+              className="stat-fill motivation" 
+              style={{ width: `${MO * 100}%` }}
+            />
+          </div>
+          <span className="stat-value">{Math.round(MO * 100)}%</span>
+        </div>
+        
+        <div className="stat-item">
+          <span className="stat-label">Satiation:</span>
+          <div className="stat-bar">
+            <div 
+              className="stat-fill satiation" 
+              style={{ width: `${SAT * 100}%` }}
+            />
+          </div>
+          <span className="stat-value">{Math.round(SAT * 100)}%</span>
+        </div>
+        
+        {BURST > 0.1 && (
+          <div className="stat-item">
+            <span className="stat-label">Burst:</span>
+            <div className="stat-bar">
+              <div 
+                className="stat-fill burst" 
+                style={{ width: `${BURST * 100}%` }}
+              />
+            </div>
+            <span className="stat-value">{Math.round(BURST * 100)}%</span>
+          </div>
+        )}
+      </div>
+
       <div className="feed-content" ref={feedRef}>
-        {recentEvents.length === 0 ? (
+        {displayEvents.length === 0 ? (
           <div className="no-events">No events yet. The session is starting...</div>
         ) : (
-          recentEvents.map((event, index) => (
+          displayEvents.map((event, index) => (
             <div key={`${event.t}-${index}`} className={getEventClass(event)}>
               <span className="event-icon">{getEventIcon(event)}</span>
               <span className="event-time">t={event.t.toFixed(1)}s</span>

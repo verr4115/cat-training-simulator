@@ -20,11 +20,16 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
   const graphRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!graphRef.current || timePoints.length === 0) return;
+    if (!graphRef.current) return;
+
+    // Use empty arrays if no data yet
+    const xData = timePoints.length > 0 ? timePoints : [0];
+    const yTargetData = targetRates.length > 0 ? targetRates : [0];
+    const yAltData = altRates.length > 0 ? altRates : [0];
 
     const targetTrace = {
-      x: timePoints,
-      y: targetRates,
+      x: xData,
+      y: yTargetData,
       type: 'scatter',
       mode: 'lines',
       name: targetBehavior,
@@ -35,8 +40,8 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
     } as any;
 
     const altTrace = {
-      x: timePoints,
-      y: altRates,
+      x: xData,
+      y: yAltData,
       type: 'scatter',
       mode: 'lines',
       name: altBehavior,
