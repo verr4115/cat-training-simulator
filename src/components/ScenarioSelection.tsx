@@ -28,7 +28,7 @@ export const ScenarioSelection: React.FC<ScenarioSelectionProps> = ({ onSelectSc
       </header>
 
       <div className="scenarios-grid">
-        {SCENARIOS.filter(scenario => scenario.id !== 'sitting' && scenario.id !== 'scratching').map((scenario) => (
+        {SCENARIOS.filter(scenario => scenario.id !== 'sitting').map((scenario) => (
           <div key={scenario.id} className="scenario-card">
             <div className="scenario-icon">{scenario.icon}</div>
             
