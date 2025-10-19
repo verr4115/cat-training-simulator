@@ -39,25 +39,34 @@ export const CatStage: React.FC<CatStageProps> = ({
     if (animation.type === 'reinforcement') {
       imagePath = '/cat-images/reinforced.png';
     }
-    // Sleepy/satiated state - use idle frame
+    // Sleepy/satiated state
     else if (animation.type === 'sleepy' || SAT > 0.7) {
-      imagePath = '/cat-images/idle1.png';
+      // Use scenario-specific sleeping image for scratching
+      if (scenario.id === 'scratching') {
+        imagePath = '/cat-images/sleeping2.png';
+      } else {
+        imagePath = '/cat-images/sleeping.png';
+      }
     }
-    // Extinction burst state - use target behavior or jumping
+    // Extinction burst state
     else if (animation.type === 'burst' || BURST > 0.5) {
-      if (scenario.id === 'meowing') imagePath = '/cat-images/meowing.png';
-      else if (scenario.id === 'jumping') imagePath = '/cat-images/jumping.png';
-      else imagePath = '/cat-images/jumping.png'; // Default to jumping for burst
+      imagePath = '/cat-images/burst.png';
     }
     // Target behavior - specific to scenario
     else if (animation.type === 'target_behavior') {
       if (scenario.id === 'meowing') imagePath = '/cat-images/meowing.png';
       else if (scenario.id === 'jumping') imagePath = '/cat-images/jumping.png';
+      else if (scenario.id === 'scratching') imagePath = '/cat-images/scratching.png';
       else imagePath = `/cat-images/idle${idleFrame}.png`; // Fallback for other scenarios
     }
-    // Alternative behavior (sitting, being quiet, etc.) - use idle
+    // Alternative behavior (sitting, standing, being quiet, etc.)
     else if (animation.type === 'alt_behavior') {
-      imagePath = `/cat-images/idle${idleFrame}.png`;
+      // Use standing for scratching scenario's alt behavior
+      if (scenario.id === 'scratching') {
+        imagePath = '/cat-images/standing.png';
+      } else {
+        imagePath = `/cat-images/idle${idleFrame}.png`;
+      }
     }
     // Default idle state - cycle between two idle images
     else {
