@@ -1,12 +1,18 @@
 .cat-stage {
   background: white;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .cat-stage {
+    max-width: 100%;
+  }
 }
 
 .stage-header {

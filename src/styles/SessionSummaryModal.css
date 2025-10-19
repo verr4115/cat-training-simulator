@@ -19,11 +19,13 @@
   max-width: 700px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   animation: modal-appear 0.3s ease-out;
   position: relative;
   z-index: 1001;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -32,6 +34,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 16px 16px 0 0;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -69,12 +72,13 @@
 }
 
 .performance-badge {
-  margin: -2rem 2rem 0;
+  margin: 1rem 2rem 0;
   padding: 1.5rem;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   color: white;
+  flex-shrink: 0;
 }
 
 .performance-rating {
@@ -90,6 +94,27 @@
 
 .summary-content {
   padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.summary-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.summary-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.summary-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.summary-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .summary-section {
@@ -244,6 +269,8 @@
   display: flex;
   gap: 1rem;
   border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  background: white;
 }
 
 .modal-actions button {

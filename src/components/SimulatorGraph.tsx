@@ -22,10 +22,48 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
   useEffect(() => {
     if (!graphRef.current) return;
 
-    // Use empty arrays if no data yet
-    const xData = timePoints.length > 0 ? timePoints : [0];
-    const yTargetData = targetRates.length > 0 ? targetRates : [0];
-    const yAltData = altRates.length > 0 ? altRates : [0];
+    // Don't render if we don't have actual data yet
+    if (timePoints.length === 0) {
+      // Show empty state with same styling as actual graph
+      const emptyLayout = {
+        title: 'Behavior Rates Over Time',
+        annotations: [{
+          text: 'Press Play to start collecting data...',
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.5,
+          y: 0.5,
+          showarrow: false,
+          font: { size: 16, color: '#999' }
+        }],
+        xaxis: { 
+          title: 'Time (seconds)', 
+          range: [0, 60],
+          showgrid: true,
+          gridcolor: '#e0e0e0'
+        },
+        yaxis: { 
+          title: 'Rate (responses/minute)', 
+          range: [0, 5],
+          showgrid: true,
+          gridcolor: '#e0e0e0'
+        },
+        margin: {
+          l: 50,
+          r: 20,
+          t: 40,
+          b: 50
+        },
+        paper_bgcolor: '#ffffff',
+        plot_bgcolor: '#fafafa'
+      } as any;
+      Plotly.react(graphRef.current, [], emptyLayout, { responsive: true, displayModeBar: false });
+      return;
+    }
+
+    const xData = timePoints;
+    const yTargetData = targetRates;
+    const yAltData = altRates;
 
     const targetTrace = {
       x: xData,
@@ -51,6 +89,9 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
       }
     } as any;
 
+    // Calculate max value for better y-axis scaling
+    const maxRate = Math.max(...yTargetData, ...yAltData, 1);
+    
     const layout = {
       title: 'Behavior Rates Over Time',
       xaxis: {
@@ -62,7 +103,8 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
         title: 'Rate (responses/minute)',
         showgrid: true,
         gridcolor: '#e0e0e0',
-        rangemode: 'tozero'
+        rangemode: 'tozero',
+        range: [0, Math.max(maxRate * 1.2, 5)] // Ensure minimum range of 5
       },
       legend: {
         x: 0.02,
@@ -72,9 +114,9 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
         borderwidth: 1
       },
       margin: {
-        l: 60,
-        r: 30,
-        t: 50,
+        l: 50,
+        r: 20,
+        t: 40,
         b: 50
       },
       paper_bgcolor: '#ffffff',
@@ -84,11 +126,28 @@ export const SimulatorGraph: React.FC<SimulatorGraphProps> = ({
 
     const config = {
       responsive: true,
-      displayModeBar: false
+      displayModeBar: true,
+      modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
+      displaylogo: false,
+      modeBarButtonsToAdd: []
     } as any;
 
     Plotly.react(graphRef.current, [targetTrace, altTrace], layout, config);
   }, [timePoints, targetRates, altRates, targetBehavior, altBehavior]);
+
+  // Handle window resize
+  useEffect(() => {
+    if (!graphRef.current) return;
+    
+    const handleResize = () => {
+      if (graphRef.current) {
+        Plotly.Plots.resize(graphRef.current);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="simulator-graph">

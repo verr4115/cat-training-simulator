@@ -209,6 +209,13 @@
   min-height: 0;
 }
 
+@media (max-width: 768px) {
+  .lab-content {
+    padding: 0;
+    gap: 0;
+  }
+}
+
 .controls-container {
   grid-column: 1;
   grid-row: 1;
@@ -223,6 +230,24 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-height: 0;
+}
+
+.right-content-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.right-content-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.right-content-scrollable::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.right-content-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 
 .quick-tip-banner {
@@ -251,7 +276,8 @@
 }
 
 .graphs-container {
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-height: 0;
 }
 
 .cat-stage-wrapper {
@@ -411,7 +437,7 @@
   background: linear-gradient(135deg, #FFF9C4 0%, #FFE082 100%);
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -454,24 +480,302 @@
 }
 
 /* Side-by-side layout on all screens with independent scrolling */
-@media (max-width: 768px) {
-  .lab-content {
-    grid-template-columns: 200px 1fr;
-    gap: 0.5rem;
-    padding: 0.5rem;
+/* Mobile controls toggle button - hidden by default */
+.mobile-controls-toggle {
+  display: none;
+}
+
+/* Mobile controls close button - hidden by default */
+.mobile-controls-close {
+  display: none;
+}
+
+/* Mobile top bar toggle - hidden by default */
+.mobile-top-toggle {
+  display: none;
+}
+
+.top-bar-main {
+  display: contents;
+}
+
+.top-bar-collapsible {
+  display: contents;
+}
+
+/* Hide mobile-specific text on desktop */
+.mobile-tip {
+  display: none;
+}
+
+.desktop-tip {
+  display: inline;
+}
+
+/* Stack cat and events vertically on narrow screens */
+@media (max-width: 1024px) {
+  .cat-and-events-row {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
+  .events-container {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Show mobile controls toggle button */
+  .mobile-controls-toggle {
+    display: block;
+    width: calc(100% - 1rem);
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    min-height: 44px;
+    flex-shrink: 0;
+  }
+
+  .mobile-controls-toggle:active {
+    transform: scale(0.98);
+  }
+
+  /* Show close button in sidebar */
+  .mobile-controls-close {
+    display: block;
+    position: sticky;
+    top: 0;
+    right: 0;
+    margin-left: auto;
+    margin-bottom: 1rem;
+    width: 44px;
+    height: 44px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-controls-close:active {
+    transform: scale(0.9);
+    background: #764ba2;
+  }
+
+  .lab-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  /* Hide controls by default on mobile */
   .controls-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    background: white;
     overflow-y: auto;
+    padding: 0.75rem;
+    padding-top: 0.75rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Show controls when toggled */
+  .controls-container.mobile-visible {
+    transform: translateX(0);
+  }
+
+  .right-content-scrollable {
+    grid-row: 1;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+  }
+  
+  .simulator-lab {
+    background: white;
   }
 
   .cat-and-events-row {
     flex-direction: column;
     gap: 0.5rem;
+    padding: 0 0.5rem;
   }
 
   .cat-container {
     width: 100%;
+  }
+
+  .events-container {
+    height: 280px;
+    width: 100%;
+  }
+
+  .graphs-container {
+    margin-top: 0;
+    width: 100%;
+    padding: 0 0.5rem 0.5rem;
+  }
+
+  /* Make top bar collapsible on mobile */
+  .top-bar {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 0;
+  }
+
+  .top-bar-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .mobile-top-toggle {
+    display: block;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-top-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .top-bar-collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .top-bar-collapsible.expanded {
+    max-height: 500px;
+    margin-top: 0.5rem;
+  }
+
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .top-bar-center {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .top-bar-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .info-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    flex: 1;
+  }
+
+  .back-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .scenario-title {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    flex-shrink: 1;
+  }
+
+  .session-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .button-group-left {
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .control-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .slider-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .mo-control {
+    width: 100%;
+  }
+
+  /* Make buttons and touch targets larger */
+  .control-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+
+  /* Stack quick tip banner content */
+  .quick-tip-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .tip-icon {
+    font-size: 1.5rem;
+  }
+
+  .mobile-tip {
+    display: inline;
+  }
+
+  .desktop-tip {
+    display: none;
   }
 
   .events-container {
@@ -492,15 +796,17 @@
   }
   
   .quick-tip-banner {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 0 0.5rem 0.5rem;
   }
 
   .quick-tip-banner .tip-text {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
   }
 
   .quick-tip-banner .tip-icon {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 }
 
@@ -678,17 +984,17 @@
 
   /* Even narrower control panel on very small screens */
   .lab-content {
-    grid-template-columns: 170px 1fr;
-    gap: 0.4rem;
-    padding: 0.4rem;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
   }
 }
 
 @media (max-width: 480px) {
   .lab-content {
-    grid-template-columns: 150px 1fr;
-    gap: 0.3rem;
-    padding: 0.3rem;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
   }
 
   .controls-container {

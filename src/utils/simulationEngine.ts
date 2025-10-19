@@ -157,29 +157,33 @@ export function tick(state: SimulationState): void {
   const noise = () => (Math.random() - 0.5) * 0.2;
   
   // Target behavior propensity (problem behavior)
-  const pTarget = sigmoid(
-    -1.5 + // baseline (lower = less frequent)
-    2.0 * state.MO + // motivated = more behavior
+  const pTargetRaw = sigmoid(
+    -0.5 + // baseline (adjusted for more consistent frequency)
+    1.5 * state.MO + // motivated = more behavior
     1.5 * state.recentReinfTarget - // if reinforced recently, more likely
-    2.0 * state.SAT + // satiated = less behavior
+    1.5 * state.SAT + // satiated = less behavior (reduced impact)
     3.0 * state.BURST + // burst = much more behavior
     noise()
   );
   
   // Alternative behavior propensity (replacement behavior)
-  const competitionEffect = state.recentReinfTarget > 0 ? 0.5 : 0;
-  const pAlt = sigmoid(
-    -2.0 + // baseline (naturally less frequent)
+  const competitionEffect = state.recentReinfTarget > 0 ? 0.3 : 0;
+  const pAltRaw = sigmoid(
+    -1.0 + // baseline (adjusted for more consistent frequency)
     2.5 * state.recentReinfAlt - // if reinforced, more likely
-    competitionEffect + // target behavior competes
-    0.5 * state.MO + // slight motivation effect
+    competitionEffect + // target behavior competes (reduced)
+    0.8 * state.MO + // motivation effect (increased)
     noise()
   );
   
+  // Apply minimum probabilities to ensure some behavior happens
+  const pTarget = Math.max(pTargetRaw, 0.35);
+  const pAlt = Math.max(pAltRaw, 0.25);
+  
   // 3) Sample emissions (behaviors are incompatible)
-  // Reduced multiplier to 0.15 to make behaviors happen every 2-3 seconds
-  const emitAlt = Math.random() < pAlt * state.dt * 0.15;
-  const emitTarget = !emitAlt && Math.random() < pTarget * state.dt * 0.15;
+  // Multiplier adjusted to 1.8 to make behaviors happen every 2-3 seconds
+  const emitAlt = Math.random() < pAlt * state.dt * 1.8;
+  const emitTarget = !emitAlt && Math.random() < pTarget * state.dt * 1.8;
   
   // 4) Handle schedules and intervention logic
   let delivered: 'target' | 'alt' | 'time' | null = null;

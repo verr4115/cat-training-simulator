@@ -23,6 +23,8 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
   const [summary, setSummary] = useState<SessionSummary | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [speedMultiplier, setSpeedMultiplier] = useState(1); // 1x speed by default
+  const [showMobileControls, setShowMobileControls] = useState(false);
+  const [showTopControls, setShowTopControls] = useState(false);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const lastTickTimeRef = useRef<number>(Date.now());
 
@@ -42,7 +44,16 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
             tick(newState);
           }
           lastTickTimeRef.current = now;
-          return newState;
+          // Return a new object with new array references so React detects the change
+          return {
+            ...newState,
+            timePoints: [...newState.timePoints],
+            targetRates: [...newState.targetRates],
+            altRates: [...newState.altRates],
+            events: [...newState.events],
+            recentTargetBehaviors: [...newState.recentTargetBehaviors],
+            recentAltBehaviors: [...newState.recentAltBehaviors]
+          };
         }
         return prevState;
       });
@@ -68,14 +79,18 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
   }, [state.isComplete, scenario, summary, state]);
 
   const handleRestart = () => {
-    setState(initializeSimulation(scenario, state.sessionNumber));
+    const newState = initializeSimulation(scenario, state.sessionNumber);
+    newState.isPaused = true; // Start paused to allow adjustments
+    setState(newState);
     setShowSummary(false);
     setSummary(null);
     lastTickTimeRef.current = Date.now();
   };
 
   const handleNextSession = () => {
-    setState(initializeSimulation(scenario, state.sessionNumber + 1));
+    const newState = initializeSimulation(scenario, state.sessionNumber + 1);
+    newState.isPaused = true; // Start paused to allow adjustments
+    setState(newState);
     setShowSummary(false);
     setSummary(null);
     lastTickTimeRef.current = Date.now();
@@ -98,6 +113,10 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
       });
       return newState;
     });
+    // Auto-close mobile controls after selection
+    if (window.innerWidth <= 768) {
+      setShowMobileControls(false);
+    }
   };
 
   const handleScheduleChange = (scheduleType: 'target' | 'alt', schedule: ScheduleType, param?: number) => {
@@ -140,96 +159,113 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
   return (
     <div className="simulator-lab">
       <div className="top-bar">
-        <div className="top-bar-left">
+        <div className="top-bar-main">
           <div className="info-group">
             <button className="back-button" onClick={onBack}>← Back</button>
             <h2 className="scenario-title">{scenario.title}</h2>
             <span className="session-badge">Session #{state.sessionNumber}</span>
           </div>
 
-          <div className="button-group-left">
-            <button 
-              className="control-button help" 
-              onClick={() => setShowHelp(true)}
-              title="How to use the simulator"
-            >
-              ❓ Help
-            </button>
-
-            <button 
-              className={`control-button ${state.isPaused ? 'play' : 'pause'}`}
-              onClick={handlePauseToggle}
-              disabled={state.isComplete}
-            >
-              {state.isPaused ? '▶ Play' : '⏸ Pause'}
-            </button>
-
-            <button className="control-button restart" onClick={handleRestart}>
-              🔄 Restart
-            </button>
-          </div>
+          <button 
+            className="mobile-top-toggle"
+            onClick={() => setShowTopControls(!showTopControls)}
+          >
+            {showTopControls ? '▲' : '▼'}
+          </button>
         </div>
 
-        <div className="top-bar-center">
-          <div className="progress-container">
-            <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${progressPercent}%` }}
-              />
+        <div className={`top-bar-collapsible ${showTopControls ? 'expanded' : ''}`}>
+          <div className="top-bar-left">
+            <div className="button-group-left">
+              <button 
+                className="control-button help" 
+                onClick={() => setShowHelp(true)}
+                title="How to use the simulator"
+              >
+                ❓ Help
+              </button>
+
+              <button 
+                className={`control-button ${state.isPaused ? 'play' : 'pause'}`}
+                onClick={handlePauseToggle}
+                disabled={state.isComplete}
+              >
+                {state.isPaused ? '▶ Play' : '⏸ Pause'}
+              </button>
+
+              <button className="control-button restart" onClick={handleRestart}>
+                🔄 Restart
+              </button>
             </div>
-            <span className="time-display">
-              {Math.floor(state.t)}s / {state.sessionDuration}s
-            </span>
           </div>
-        </div>
 
-        <div className="top-bar-right">
-          <div className="slider-group">
-            <div className="mo-control">
-              <div className="control-label-row">
-                <label>Speed</label>
-                <span>{speedMultiplier}x</span>
+          <div className="top-bar-center">
+            <div className="progress-container">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{ width: `${progressPercent}%` }}
+                />
               </div>
-              <input
-                type="range"
-                min="0.25"
-                max="3"
-                step="0.25"
-                value={speedMultiplier}
-                onChange={(e) => setSpeedMultiplier(parseFloat(e.target.value))}
-              />
+              <span className="time-display">
+                {Math.floor(state.t)}s / {state.sessionDuration}s
+              </span>
             </div>
+          </div>
 
-            <div className="mo-control">
-              <div className="control-label-row">
-                <label>Motivation (MO)</label>
-                <span>{Math.round(state.MO * 100)}%</span>
+          <div className="top-bar-right">
+            <div className="slider-group">
+              <div className="mo-control">
+                <div className="control-label-row">
+                  <label>Speed</label>
+                  <span>{speedMultiplier}x</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.25"
+                  max="3"
+                  step="0.25"
+                  value={speedMultiplier}
+                  onChange={(e) => setSpeedMultiplier(parseFloat(e.target.value))}
+                />
               </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={state.MO}
-                onChange={(e) => handleMOChange(parseFloat(e.target.value))}
-                disabled={!state.isPaused}
-              />
-            </div>
 
-            <button 
-              className="control-button next" 
-              onClick={handleNextSession}
-              disabled={!state.isComplete}
-            >
-              Next Session →
-            </button>
+              <div className="mo-control">
+                <div className="control-label-row">
+                  <label>Motivation (MO)</label>
+                  <span>{Math.round(state.MO * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={state.MO}
+                  onChange={(e) => handleMOChange(parseFloat(e.target.value))}
+                  disabled={!state.isPaused}
+                />
+              </div>
+
+              <button 
+                className="control-button next" 
+                onClick={handleNextSession}
+                disabled={!state.isComplete}
+              >
+                Next Session →
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="lab-content">
-        <div className="controls-container">
+        <div className={`controls-container ${showMobileControls ? 'mobile-visible' : ''}`}>
+          <button 
+            className="mobile-controls-close"
+            onClick={() => setShowMobileControls(false)}
+          >
+            ✕
+          </button>
           <SimulatorControls
             state={state}
             scenario={scenario}
@@ -241,12 +277,36 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
         </div>
 
         <div className="right-content-scrollable">
-          {state.isPaused && !state.isComplete && (
+          <button 
+            className="mobile-controls-toggle"
+            onClick={() => setShowMobileControls(true)}
+          >
+            ⚙️ Configure Intervention
+          </button>
+          {!state.isComplete && (
             <div className="quick-tip-banner">
               <div className="quick-tip-content">
-                <span className="tip-icon">💡</span>
+                <span className="tip-icon">
+                  {state.isPaused ? '💡' : state.t < 10 ? '🚀' : state.reinforcersDelivered === 0 ? '⚠️' : '✨'}
+                </span>
                 <div className="tip-text">
-                  <strong>Ready to start?</strong> Configure your intervention on the left, then press the <strong>Play button</strong> to begin!
+                  {state.isPaused ? (
+                    <>
+                      <strong>Ready to start?</strong> <span className="mobile-tip">Tap "Configure Intervention" above, then</span><span className="desktop-tip">Configure your intervention, then</span> press the <strong>Play button</strong> to begin!
+                    </>
+                  ) : state.t < 10 ? (
+                    <>
+                      <strong>Session started!</strong> Watch the cat's behavior and see how your intervention affects the rates.
+                    </>
+                  ) : state.reinforcersDelivered === 0 ? (
+                    <>
+                      <strong>Tip:</strong> No reinforcers delivered yet. Make sure your alternative behavior schedule isn't set to Extinction!
+                    </>
+                  ) : (
+                    <>
+                      <strong>Looking good!</strong> {state.reinforcersDelivered} reinforcer{state.reinforcersDelivered !== 1 ? 's' : ''} delivered so far. Keep an eye on satiation!
+                    </>
+                  )}
                 </div>
               </div>
             </div>
