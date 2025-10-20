@@ -37,7 +37,12 @@ export const CatStage: React.FC<CatStageProps> = ({
     
     // Reinforced state - cat getting treat
     if (animation.type === 'reinforcement') {
-      imagePath = '/cat-images/reinforced.png';
+      // Use scenario-specific reinforced image for scratching
+      if (scenario.id === 'scratching') {
+        imagePath = '/cat-images/reinforcedcouch.png';
+      } else {
+        imagePath = '/cat-images/reinforced.png';
+      }
     }
     // Sleepy/satiated state
     else if (animation.type === 'sleepy' || SAT > 0.7) {
@@ -66,11 +71,11 @@ export const CatStage: React.FC<CatStageProps> = ({
         }
       }
     }
-    // Alternative behavior (sitting, standing, being quiet, etc.)
+    // Alternative behavior (sitting, using scratching post, being quiet, etc.)
     else if (animation.type === 'alt_behavior') {
-      // Use standing for scratching scenario's alt behavior
+      // Use scratching post for scratching scenario's alt behavior
       if (scenario.id === 'scratching') {
-        imagePath = '/cat-images/standing.png';
+        imagePath = '/cat-images/scratchingpost.png';
       } else {
         imagePath = `/cat-images/idle${idleFrame}.png`;
       }
