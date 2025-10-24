@@ -113,10 +113,6 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
       });
       return newState;
     });
-    // Auto-close mobile controls after selection
-    if (window.innerWidth <= 768) {
-      setShowMobileControls(false);
-    }
   };
 
   const handleScheduleChange = (scheduleType: 'target' | 'alt', schedule: ScheduleType, param?: number) => {

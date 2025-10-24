@@ -328,7 +328,7 @@ export function tick(state: SimulationState): void {
     state.currentAnimation = {
       type: animationType,
       startTime: state.t,
-      duration: animationType === 'reinforcement' ? 1.0 : 0.5
+      duration: animationType === 'reinforcement' ? 1.5 : 1.0
     };
   } else if (state.t - state.currentAnimation.startTime > state.currentAnimation.duration) {
     state.currentAnimation = {
