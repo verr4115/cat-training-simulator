@@ -138,17 +138,6 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
     }));
   };
 
-  const handleMOChange = (value: number) => {
-    setState(prev => ({ ...prev, MO: value }));
-  };
-
-  const handleManualReinforce = (behaviorType: 'target' | 'alt') => {
-    setState(prev => {
-      const newState = { ...prev };
-      deliverManualReinforcement(newState, behaviorType);
-      return newState;
-    });
-  };
 
   const progressPercent = (state.t / state.sessionDuration) * 100;
 
@@ -226,22 +215,6 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
                 />
               </div>
 
-              <div className="mo-control">
-                <div className="control-label-row">
-                  <label>Motivation (MO)</label>
-                  <span>{Math.round(state.MO * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={state.MO}
-                  onChange={(e) => handleMOChange(parseFloat(e.target.value))}
-                  disabled={!state.isPaused}
-                />
-              </div>
-
               <button 
                 className="control-button next" 
                 onClick={handleNextSession}
@@ -268,7 +241,6 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
             onInterventionChange={handleInterventionChange}
             onScheduleChange={handleScheduleChange}
             onReinforcerChange={handleReinforcerChange}
-            onManualReinforce={handleManualReinforce}
           />
         </div>
 
@@ -422,10 +394,9 @@ export const SimulatorLab: React.FC<SimulatorLabProps> = ({ scenario, onBack }) 
                 <h3>💡 Understanding the Interface</h3>
                 <ul>
                   <li><strong>Cat Stage:</strong> Shows animations when behaviors occur and reinforcement is delivered</li>
-                  <li><strong>Motivation (MO):</strong> Higher motivation = more frequent behaviors</li>
                   <li><strong>Satiation bars:</strong> Track how "full" the cat is getting from reinforcement</li>
                   <li><strong>Event Log:</strong> Chronicles every behavior and reinforcement delivery</li>
-                  <li><strong>Manual Actions:</strong> You can manually reinforce behaviors</li>
+                  <li><strong>Speed Control:</strong> Adjust simulation speed from 0.25x to 3x for your comfort</li>
                 </ul>
               </section>
 

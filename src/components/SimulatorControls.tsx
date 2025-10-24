@@ -8,7 +8,6 @@ interface SimulatorControlsProps {
   onInterventionChange: (intervention: InterventionType) => void;
   onScheduleChange: (scheduleType: 'target' | 'alt', schedule: ScheduleType, param?: number) => void;
   onReinforcerChange: (type: ReinforcerType, magnitude: 1 | 2 | 3) => void;
-  onManualReinforce: (behaviorType: 'target' | 'alt') => void;
 }
 
 export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
@@ -16,8 +15,7 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
   scenario: _scenario,
   onInterventionChange,
   onScheduleChange,
-  onReinforcerChange,
-  onManualReinforce
+  onReinforcerChange
 }) => {
   const [altScheduleParam, setAltScheduleParam] = useState<number>(
     state.scheduleAlt.param || 5
@@ -187,28 +185,6 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
         </div>
       </div>
 
-      <div className="controls-section">
-        <h3>⚡ Manual Actions</h3>
-        <div className="manual-actions">
-          <button
-            className="action-button reinforce-alt"
-            onClick={() => onManualReinforce('alt')}
-            disabled={state.isComplete}
-          >
-            Reinforce Alternative Now
-          </button>
-          
-          <button
-            className="action-button reinforce-target warning"
-            onClick={() => onManualReinforce('target')}
-            disabled={state.isComplete}
-            title="Caution: This will strengthen the target behavior!"
-          >
-            ⚠️ Reinforce Target (Not Recommended)
-          </button>
-        </div>
-      </div>
-
       <div className="controls-section stats-section">
         <h3>📊 Session Statistics</h3>
         <div className="stats-grid">
@@ -251,9 +227,6 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
           )}
           {state.BURST > 0.5 && (
             <p>🔥 Extinction burst occurring - stay consistent, this is temporary!</p>
-          )}
-          {state.MO < 0.3 && (
-            <p>📉 Low motivation - consider increasing MO or taking a break to reset.</p>
           )}
         </div>
       </div>
